@@ -1,1 +1,2 @@
-/flask-mynotes/env
+__pycache*
+env/
