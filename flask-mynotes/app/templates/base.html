@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Notes</title>
+    <link rel= "stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+            </li>
+            {% if user and user.logged_in %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.new_note') }}">New note</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#">Hello, {{ user.name }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.logout') }}">Exit</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.authorization') }}">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('main.registration') }}#">Registration</a>
+            </li>
+            {% endif %}
+          </ul>
+    </header>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}
+    {% endblock %}
+
+    <script>
+      function getJsonFromUrl(url) {
+        if(!url) url = location.href;
+        var question = url.indexOf("?");
+        var hash = url.indexOf("#");
+        if(hash==-1 && question==-1) return {};
+        if(hash==-1) hash = url.length;
+        var query = question==-1 || hash==question+1 ? url.substring(hash) : 
+        url.substring(question+1,hash);
+        var result = {};
+        query.split("&").forEach(function(part) {
+          if(!part) return;
+          part = part.split("+").join(" "); // replace every + with space, regexp-free version
+          var eq = part.indexOf("=");
+          var key = eq>-1 ? part.substr(0,eq) : part;
+          var val = eq>-1 ? decodeURIComponent(part.substr(eq+1)) : "";
+          var from = key.indexOf("[");
+          if(from==-1) result[decodeURIComponent(key)] = val;
+          else {
+            var to = key.indexOf("]",from);
+            var index = decodeURIComponent(key.substring(from+1,to));
+            key = decodeURIComponent(key.substring(0,from));
+            if(!result[key]) result[key] = [];
+            if(!index) result[key].push(val);
+            else result[key][index] = val;
+          }
+        });
+        return result;
+      }
+    </script>
+</body>
+</html>

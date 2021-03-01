@@ -1,0 +1,25 @@
+body {
+    margin-left: 20px;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flash {
+    color: red;
+}
+
+.notes {
+    width: 70%;
+}
+
+.note_body {
+    max-width: 80%;
+}
+
+.card-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

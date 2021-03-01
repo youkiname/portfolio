@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Auth</h1>
+    <form id="auth-form" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Username:</label>
+            <input type="text" class="form-control" name="username-input">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="password-input">
+        </div>
+        <button type="Submit" class="btn btn-primary">Login</button>
+    </form>
+{% endblock %}

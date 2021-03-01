@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Create new note</h1>
+    <form id="new-note-form" method="POST">
+        <div class="mb-3">
+            <input type="text" class="form-control" name="title-input" placeholder="Title">
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" name="text-input" cols="30" rows="10" placeholder="Text"></textarea>
+        </div>
+        <button type="Submit" class="btn btn-primary">Create</button>
+    </form>
+{% endblock %}
