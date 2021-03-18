@@ -10,12 +10,8 @@ body {
     color: red;
 }
 
-.notes {
-    width: 70%;
-}
-
-.note_body {
-    max-width: 80%;
+.note-body span, .note-body h4 {
+    text-align: center;
 }
 
 .card-links {

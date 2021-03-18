@@ -1,13 +1,19 @@
 from werkzeug.datastructures import ImmutableMultiDict
 from core import users
-from flask import session, flash, redirect
+from flask import flash, redirect
+from flask_login import login_user, logout_user
+
+
+def load_user_from_session(user_id: str):
+    return users.get_authenticated_user_by_id(user_id)
 
 
 def process_authorization(form_data: ImmutableMultiDict):
     username = form_data.get('username-input')
     password = form_data.get('password-input')
-    if users.check_password(username, password):
-        session['user'] = {"name": username, "logged_in": True}
+    db_user = users.get_with_password(username, password)
+    if db_user is not None:
+        login_user(users.AuthenticatedUser(db_user.id, db_user.name))
         flash("Success login")
         return redirect('/')
     else:
@@ -20,11 +26,11 @@ def process_registration(form_data: ImmutableMultiDict):
     if users.is_exist(username):
         flash("Username {} already exists".format(username))
         return
-    users.create_new(username, password)
-    session['user'] = {"name": username, "logged_in": True}
+    db_user = users.create_new(username, password)
+    login_user(users.AuthenticatedUser(db_user.id, db_user.name))
     flash("Success registration")
     return redirect("/")
 
 
 def logout():
-    session['user'] = None
+    logout_user()

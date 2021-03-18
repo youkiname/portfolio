@@ -1,41 +1,35 @@
 from flask import Blueprint, render_template, redirect, request
 from app.services import auth, notes
-from flask import session, flash
+from flask_login import current_user, login_required
 
 bp = Blueprint('main', __name__)
 
 
 @bp.route('/')
 def index():
-    return render_template('home.html', user=session.get('user'), notes=notes.get_last_notes())
+    return render_template('home.html', user=current_user, notes=notes.get_last_notes())
 
 
 @bp.route('/note/<int:note_id>/', methods=['GET'])
+@login_required
 def note_page(note_id: int):
-    if not session.get('user'):
-        flash('You must be logged in!')
-        return redirect('/authorization')
     note = notes.get_note_data(note_id)
-    return render_template('note_page.html', user=session.get('user'), note=note)
+    return render_template('note_page.html', user=current_user, note=note)
 
 
 @bp.route('/new_note/', methods=['POST', 'GET'])
+@login_required
 def new_note():
-    if not session.get('user'):
-        flash('You must be logged in!')
-        return redirect('/authorization')
     if request.method == "POST":
         result = notes.process_new_note(request.form)
         if result is not None:
             return result
-    return render_template('new_note.html', user=session.get('user'))
+    return render_template('new_note.html', user=current_user)
 
 
 @bp.route('/remove_note/<int:note_id>/', methods=['GET'])
+@login_required
 def remove_note(note_id: int):
-    if not session.get('user'):
-        flash('You must be logged in!')
-        return redirect('/authorization')
     notes.try_remove_note(note_id)
     return redirect('/')
 
@@ -59,6 +53,7 @@ def registration():
 
 
 @bp.route('/logout/')
+@login_required
 def logout():
     auth.logout()
     return redirect('/')

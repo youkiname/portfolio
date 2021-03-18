@@ -1,34 +1,31 @@
 from werkzeug.datastructures import ImmutableMultiDict
 from core import notes, users
-from flask import session, flash
+from flask import flash
 from markupsafe import escape
+from flask_login import current_user
 
 
 def process_new_note(form_data: ImmutableMultiDict):
-    user = session.get('user')
     title = form_data.get('title-input')
     text = form_data.get('text-input')
     if not title or not text:
         return
-    db_user = users.get(username=user['name'])
-    notes.create_new(db_user, escape(title), escape(text))
-    flash("Success")
+    if current_user.is_authenticated:
+        db_user = users.get(username=current_user.name)
+        notes.create_new(db_user, escape(title), escape(text))
+        flash("Success")
 
 
-def get_last_notes() -> list or None:
-    user = session.get('user')
-    if not user:
-        return
-    return notes.get_last_notes(user['name'])
+def get_last_notes() -> list:
+    if not current_user.is_authenticated:
+        return []
+    return notes.get_last_notes(current_user.name)
 
 
 def get_note_data(note_id: int) -> dict or None:
-    user = session.get('user')
-    if not user:
+    if not current_user.is_authenticated:
         return
-    user_db = users.get(user['name'])
-    if not user_db:
-        return
+    user_db = users.get(current_user.name)
     note = notes.get(note_id)
     if note is None:
         flash("Note {} does not exist".format(note_id))
@@ -40,8 +37,5 @@ def get_note_data(note_id: int) -> dict or None:
 
 
 def try_remove_note(note_id: int):
-    user = session.get('user')
-    if not user:
-        return
-    if notes.check_note_owner(note_id, user['name']):
+    if current_user.is_authenticated and notes.check_note_owner(note_id, current_user.name):
         notes.remove_note(note_id)
