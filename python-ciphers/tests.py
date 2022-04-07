@@ -1,11 +1,11 @@
 import hashlib
-from ciphers import SubstitutionCipher, PermutationCipher, XorCipher, get_file_extension
+from ciphers import SubstitutionCipher, PermutationCipher, XorCipher, OneTimePad, get_file_extension
 from colorama import init
 from colorama import Fore
 init(autoreset=True)
 
 
-sources = ["myfile.txt", "img2.png"]
+sources = ["myfile.txt", "img2.png", "setup.exe"]
 key_filename = "key.txt"
 
 
@@ -42,6 +42,8 @@ def main():
     check_cipher(SubstitutionCipher())
     check_cipher(PermutationCipher())
     check_cipher(XorCipher())
+    check_cipher(XorCipher())
+    # check_cipher(OneTimePad())
 
 
 if __name__ == "__main__":

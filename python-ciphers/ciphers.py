@@ -74,13 +74,19 @@ class AbstractCipher:
         return bytes[:-extra_bytes_amount]
 
     def cipher(self, filename: str, result_filename: str, key_filename: str):
+        self._cipher(filename, result_filename, key_filename)
+
+    def decipher(self, filename: str, result_filename: str, key_filename: str):
+        self._decipher(filename, result_filename, key_filename)
+
+    def _cipher(self, filename: str, result_filename: str, key_filename: str):
         key = self.generate_key()
         new_bytes = self.iterate_bytes(
             filename, lambda bytes: self.apply_key(bytes, key))
         write_bytes_to_file(result_filename, new_bytes)
         self.save_key(key_filename, key)
 
-    def decipher(self, filename: str, result_filename: str, key_filename: str):
+    def _decipher(self, filename: str, result_filename: str, key_filename: str):
         key = self.generate_decipher_key(self.load_key(key_filename))
         new_bytes = self.iterate_bytes(
             filename, lambda bytes: self.apply_decipher_key(bytes, key))
@@ -160,9 +166,13 @@ class XorCipher(AbstractCipher):
 
 
 class OneTimePad(XorCipher):
-    def __init__(self, source_filename: str) -> None:
-        super().__init__()
-        self.block_size = os.path.getsize(source_filename)
+    def cipher(self, filename: str, result_filename: str, key_filename: str):
+        self.block_size = os.path.getsize(filename)
+        self._cipher(filename, result_filename, key_filename)
+
+    def decipher(self, filename: str, result_filename: str, key_filename: str):
+        self.block_size = os.path.getsize(filename)
+        self._decipher(filename, result_filename, key_filename)
 
 
 def main():
@@ -176,6 +186,7 @@ def main():
         "s": SubstitutionCipher,
         "p": PermutationCipher,
         "x": XorCipher,
+        "o": OneTimePad,
     }
 
     cipher = ciphers[cipher_name]()
