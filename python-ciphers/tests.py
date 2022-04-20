@@ -1,7 +1,13 @@
 import hashlib
-from ciphers import SubstitutionCipher, PermutationCipher, XorCipher, OneTimePad, get_file_extension
+from ciphers import (SubstitutionCipher,
+                     PermutationCipher,
+                     XorCipher,
+                     OneTimePad,
+                     ComboCypher)
+from ciphers import get_file_extension
 from colorama import init
 from colorama import Fore
+import os
 init(autoreset=True)
 
 
@@ -39,10 +45,11 @@ def check_cipher(cipher):
 
 
 def main():
-    check_cipher(SubstitutionCipher())
-    check_cipher(PermutationCipher())
-    check_cipher(XorCipher())
-    # check_cipher(OneTimePad())
+    check_cipher(SubstitutionCipher(32))
+    check_cipher(PermutationCipher(32))
+    check_cipher(XorCipher(32))
+    check_cipher(OneTimePad(32))
+    check_cipher(ComboCypher(32))
 
 
 if __name__ == "__main__":
