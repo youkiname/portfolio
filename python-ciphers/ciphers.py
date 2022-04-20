@@ -57,13 +57,13 @@ class AbstractCipher:
                 if len(bytes) != self.block_size:
                     # add null bytes if bytes % block_size != 0
                     extra_length = self.block_size-len(bytes)
-                    bytes += bytearray([0 for _ in range(extra_length)])
+                    bytes += bytearray([255 for _ in range(extra_length)])
                 new_bytes += apply_key(bytes)
         return new_bytes
 
     def count_null_ending_bytes(self, bytes) -> int:
         i = 1
-        while bytes[-i] == 0:
+        while bytes[-i] == 255:
             i += 1
         return i - 1
 
@@ -173,6 +173,24 @@ class OneTimePad(XorCipher):
     def decipher(self, filename: str, result_filename: str, key_filename: str):
         self.block_size = os.path.getsize(filename)
         self._decipher(filename, result_filename, key_filename)
+
+
+class ComboCypher:
+    ciphers = [
+        SubstitutionCipher,
+        PermutationCipher,
+        XorCipher,
+    ]
+
+    def __init__(self) -> None:
+        self.block_size = 64
+
+    def generate_key(self) -> list[int]:
+        key = [random.randint(0, 255) for _ in range(self.block_size)]
+        return key
+
+    def generate_decipher_key(self, key: list[int]) -> list[int]:
+        return key
 
 
 def main():

@@ -5,7 +5,7 @@ from colorama import Fore
 init(autoreset=True)
 
 
-sources = ["myfile.txt", "img2.png", "setup.exe"]
+sources = ["myfile.txt", "img2.png"]
 key_filename = "key.txt"
 
 
@@ -41,7 +41,6 @@ def check_cipher(cipher):
 def main():
     check_cipher(SubstitutionCipher())
     check_cipher(PermutationCipher())
-    check_cipher(XorCipher())
     check_cipher(XorCipher())
     # check_cipher(OneTimePad())
 
