@@ -173,11 +173,36 @@ class OneTimePad(XorCipher):
         return self._decipher(filename, result_filename, key_filename)
 
 
+class CircularShiftCipher(AbstractCipher):
+    def generate_key(self) -> list[int]:
+        key = [random.randint(0, 7) for _ in range(self.block_size)]
+        return key
+
+    def generate_decipher_key(self, key: list[int]) -> list[int]:
+        return [8 - n for n in key]
+
+    def apply_key(self, bytes, key: list[int]) -> bytearray:
+        new_bytes = []
+        for i, byte in enumerate(bytes):
+            new_bytes.append(self.ISHFTC(byte, key[i], 8))
+        return bytearray(new_bytes)
+
+    def apply_decipher_key(self, bytes, key: list[int]) -> bytearray:
+        new_bytes = []
+        for i, byte in enumerate(bytes):
+            new_bytes.append(self.ISHFTC(byte, key[i], 8))
+        return bytearray(new_bytes)
+
+    def ISHFTC(self, n, d, N):
+        return ((n << d) % (1 << N)) | (n >> (N - d))
+
+
 class ComboCypher:
     ciphers = [
         SubstitutionCipher,
         PermutationCipher,
         XorCipher,
+        CircularShiftCipher
     ]
 
     def __init__(self, block_size=8) -> None:

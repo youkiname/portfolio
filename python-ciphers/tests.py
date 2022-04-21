@@ -7,7 +7,6 @@ from ciphers import (SubstitutionCipher,
 from ciphers import get_file_extension
 from colorama import init
 from colorama import Fore
-import os
 init(autoreset=True)
 
 
