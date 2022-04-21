@@ -1,9 +1,10 @@
-import imp
 import random
 import json
 import sys
 import os
 from copy import deepcopy
+
+FAKE_NULL_BYTE = 255
 
 
 def get_file_extension(filename: str):
@@ -59,13 +60,13 @@ class AbstractCipher:
                 if len(bytes) != self.block_size:
                     # add null bytes if bytes % block_size != 0
                     extra_length = self.block_size-len(bytes)
-                    bytes += bytearray([255 for _ in range(extra_length)])
+                    bytes += bytearray([FAKE_NULL_BYTE for _ in range(extra_length)])
                 new_bytes += apply_key(bytes)
         return new_bytes
 
     def count_null_ending_bytes(self, bytes) -> int:
         i = 1
-        while bytes[-i] == 255:
+        while bytes[-i] == FAKE_NULL_BYTE:
             i += 1
         return i - 1
 
@@ -262,7 +263,7 @@ class ComboCypher:
                 if len(bytes) != self.block_size:
                     # add null bytes if bytes % block_size != 0
                     extra_length = self.block_size-len(bytes)
-                    bytes += bytearray([255 for _ in range(extra_length)])
+                    bytes += bytearray([FAKE_NULL_BYTE for _ in range(extra_length)])
                 write_bytes_to_file(
                     result_filename, self.apply_key(bytes, key), append=True)
         self.save_key(key_filename, key)
@@ -281,7 +282,7 @@ class ComboCypher:
 
     def count_null_ending_bytes(self, bytes) -> int:
         i = 1
-        while bytes[-i] == 255:
+        while bytes[-i] == FAKE_NULL_BYTE:
             i += 1
         return i - 1
 
