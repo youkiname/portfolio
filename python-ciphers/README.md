@@ -2,11 +2,11 @@
 
 Лабораторная работа 6 семестр
 
-Handmade python implementation of SubstitutionCipher, PermutationCipher, XorCipher.
+Handmade python implementation of SubstitutionCipher, PermutationCipher, XorCipher, CircularShiftCipher, ComboCypher.
 
 ### Usage
 ```
-from ciphers import XorCipher  # or SubstitutionCipher, PermutationCipher
+from ciphers import XorCipher
 
 cipher = XorCipher()
 cipher.cipher("myfile.txt", "encrypted.txt", "key.txt")
